@@ -1,0 +1,211 @@
+const express = require('express')
+const bodyParser = require('body-parser')
+const parse = require('csv').parse
+const mysql = require('mysql')
+const fs = require('fs');
+const fetch = require('node-fetch');
+const FormData = require('form-data');
+const app = express();
+const port = 5000;
+
+
+require('dotenv').config();
+
+app.use(bodyParser.json())
+app.use(express.static('public'))
+
+/*  */
+
+app.get('/read', (req, res) => {
+
+  const data = fs.readFileSync('d:/grafana/grafana.csv')
+  parse(data, {
+    delimiter: ';',
+    trim: true
+  }, (err, records) => {
+    if (err) {
+      console.error(err)
+      return res.status(400).json({ success: false, message: 'An error occurred' })
+    }
+    return res.json({ data: records })
+  })
+})
+
+app.get('/zz', (req, res) => {
+
+  const data = fs.readFileSync('d:/grafana/grafana.csv')
+  parse(data, {
+    delimiter: ';',
+    trim: true
+  }, (err, records) => {
+    if (err) {
+      console.error(err)
+      return res.status(400).json({ success: false, message: 'An error occurred' })
+    }
+    return res.json({ data: records })
+  })
+})
+
+app.get('/planets', (req, res) => {
+
+
+  const MongoClient = require('mongodb').MongoClient
+
+  MongoClient.connect('mongodb://localhost:27017/grafana', (err, client) => {
+    if (err) throw err
+
+    const db = client.db('grafana')
+
+    db.collection('planets').find({ "name": "Mercury" }).toArray((err, result) => {
+      if (err) throw err
+
+      return res.json(result);
+    })
+  })
+
+})
+
+app.get('/nodes', (req, res) => {
+
+
+  const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'grafana',
+    password: 'TechOps!',
+    database: 'grafana'
+  })
+
+  connection.connect()
+
+  connection.query('CALL nodes()', (err, rows, fields) => {
+    if (err) throw err
+    console.log(rows)
+    return res.json(rows[0])
+  })
+
+  connection.end()
+})
+
+app.get('/edges', (req, res) => {
+
+
+  const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'grafana',
+    password: 'TechOps!',
+    database: 'grafana'
+  })
+
+  connection.connect()
+
+  connection.query('SELECT * FROM edges n', (err, rows, fields) => {
+    if (err) throw err
+
+    return res.json(rows)
+  })
+
+  connection.end()
+})
+
+app.get('/', (req, res) => {
+
+  const json = {
+    "nodes": [
+      {
+        "id": 1,
+        "title": "nginx",
+        "mainStat": 21233,
+        "arc__passed": 0.283,
+        "passed_color": "green",
+        "arc__failed": 0.717,
+        "failed_color": "red",
+      },
+      {
+        "id": 2,
+        "title": "serviceA",
+        "mainStat": 12000,
+        "arc__passed": 0.167,
+        "passed_color": "green",
+        "arc__failed": 0.833,
+        "failed_color": "red"
+      },
+      {
+        "id": 3,
+        "title": "serviceB",
+        "mainStat": 8233,
+        "arc__passed": 0.486,
+        "passed_color": "green",
+        "arc__failed": 0.514,
+        "failed_color": "red"
+      }
+    ],
+    "edges": {
+      "id": "a",
+      "source": 1,
+      "target": 2
+    }
+  };
+  return res.json(json)
+
+})
+
+app.get("/hosts", async (req, res) => {
+  //https://docs-api.centreon.com/api/centreon-web/
+  a = await authenticate();
+  const headers = { 'X-AUTH-TOKEN': a.authToken};
+
+  try {
+    hostsurl =  process.env.CENTREON_URL_PREFIX + '/monitoring/hosts'
+    const response = await fetch(hostsurl, {
+      method: 'GET',      
+      headers: headers
+    });
+    
+    const data = await response.json()
+    return res.json(data);
+  } catch (e) {
+    throw e.response ? e.response.body.message : e;
+  }
+
+
+});
+
+async function authenticate() {
+  const form = new FormData();
+  form.append("username", process.env.CENTREON_USERNAME);
+  form.append('password', process.env.CENTREON_PASSWORD);
+  
+
+  try {
+    const url = 'http://192.168.166.128/centreon/api/index.php?action=authenticate';
+    const response = await fetch(url, { method: 'POST', body: form });
+    const data = await response.json()
+    return data;
+  } catch (e) {
+    throw e.response ? e.response.body.message : e;
+  }
+}
+app.get('/stream', (req, res) => {
+
+
+  const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'grafana',
+    password: 'TechOps!',
+    database: 'grafana'
+  })
+
+  connection.connect()
+
+  connection.query('SELECT * FROM edges n', (err, rows, fields) => {
+    if (err) throw err
+
+    return res.json(rows)
+  })
+
+  connection.end()
+})
+
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`)
+})

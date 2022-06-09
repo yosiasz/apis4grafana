@@ -1,0 +1,37 @@
+{
+  "name": "csvapi",
+  "version": "1.0.0",
+  "description": "small node api that serves csv from localfile",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yosiasz/csvapi.git"
+  },
+  "keywords": [
+    "csv",
+    "node",
+    "api"
+  ],
+  "author": "Josiah Solomon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yosiasz/csvapi/issues"
+  },
+  "homepage": "https://github.com/yosiasz/csvapi#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "csv": "^6.0.5",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.17.3",
+    "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "mongodb": "^4.6.0",
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.7",
+    "nodemon": "^2.0.16"
+  }
+}

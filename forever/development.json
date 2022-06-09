@@ -1,0 +1,10 @@
+{
+    "uid": "grafanapi",
+    "append": true,
+    "watch": true,
+    "script": "server.js",
+    "sourceDir": "g:/apps/api/",
+    "logFile": "g:/apps/api/logs/forever.log",
+    "outFile": "g:/apps/api/logs/out.log",
+    "errFile": "g:/apps/api/logs/error.log"
+}
