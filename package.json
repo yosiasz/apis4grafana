@@ -1,7 +1,7 @@
 {
   "name": "apis4grafana",
   "version": "1.0.0",
-  "description": "small node api that serves csv from localfile",
+  "description": "small node api for different data sources",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/yosiasz/apis4grafana.git"
   },
   "keywords": [
-    "csv",
+    "grafana",
     "node",
     "api"
   ],
