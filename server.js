@@ -91,9 +91,9 @@ app.get('/edges', (req, res) => {
 
   const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'grafana',
-    password: 'TechOps!',
-    database: 'grafana'
+    user: process.env.MYSQL_USERNAME,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
   })
 
   connection.connect()
@@ -155,7 +155,7 @@ app.get("/hosts", async (req, res) => {
   const headers = { 'X-AUTH-TOKEN': a.authToken};
 
   try {
-    hostsurl =  process.env.CENTREON_URL_PREFIX + '/monitoring/hosts'
+    hostsurl =  process.env.CENTREON_URL_PREFIX + process.env.CENTREON_VERSION + '/monitoring/hosts'
     const response = await fetch(hostsurl, {
       method: 'GET',      
       headers: headers
@@ -177,7 +177,7 @@ async function authenticate() {
   
 
   try {
-    const url = 'http://192.168.166.128/centreon/api/index.php?action=authenticate';
+    const url = process.env.CENTREON_URL_PREFIX + '/index.php?action=authenticate';
     const response = await fetch(url, { method: 'POST', body: form });
     const data = await response.json()
     return data;
@@ -190,9 +190,9 @@ app.get('/stream', (req, res) => {
 
   const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'grafana',
-    password: 'TechOps!',
-    database: 'grafana'
+    user: process.env.MYSQL_USERNAME,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
   })
 
   connection.connect()
