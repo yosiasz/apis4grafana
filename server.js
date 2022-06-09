@@ -70,9 +70,9 @@ app.get('/nodes', (req, res) => {
 
   const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'grafana',
-    password: 'TechOps!',
-    database: 'grafana'
+    user: process.env.MYSQL_USERNAME,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
   })
 
   connection.connect()
