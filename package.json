@@ -1,5 +1,5 @@
 {
-  "name": "csvapi",
+  "name": "apis4grafana",
   "version": "1.0.0",
   "description": "small node api that serves csv from localfile",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yosiasz/csvapi.git"
+    "url": "git+https://github.com/yosiasz/apis4grafana.git"
   },
   "keywords": [
     "csv",
@@ -18,9 +18,9 @@
   "author": "Josiah Solomon",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yosiasz/csvapi/issues"
+    "url": "https://github.com/yosiasz/apis4grafana/issues"
   },
-  "homepage": "https://github.com/yosiasz/csvapi#readme",
+  "homepage": "https://github.com/yosiasz/apis4grafana#readme",
   "dependencies": {
     "body-parser": "^1.20.0",
     "csv": "^6.0.5",
