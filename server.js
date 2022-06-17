@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const parse = require('csv').parse
 const mysql = require('mysql')
 const pgp = require('pg-promise')(/* options */)
-const db = pgp('postgres://grafana:TechOps!@localhost:5432/postgis')
+
 const fs = require('fs');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
@@ -12,6 +12,7 @@ const app = express();
 const port = 5000;
 
 require('dotenv').config();
+const db = pgp('postgres://uname:password@localhost:5432/postgis')
 
 app.use(bodyParser.json())
 app.use(express.static('public'))
