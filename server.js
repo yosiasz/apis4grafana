@@ -1,20 +1,44 @@
 const express = require('express')
+const cors = require('cors');
 const bodyParser = require('body-parser')
 const parse = require('csv').parse
 const mysql = require('mysql')
+const pgp = require('pg-promise')(/* options */)
+const db = pgp('postgres://grafana:TechOps!@localhost:5432/postgis')
 const fs = require('fs');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const app = express();
 const port = 5000;
 
-
 require('dotenv').config();
 
 app.use(bodyParser.json())
 app.use(express.static('public'))
+app.use(cors());
+
+app.options('*', cors()) /
 
 /*  */
+
+app.get('/geo', (req, res) => { 
+
+  let rawdata = fs.readFileSync('./data/earthquakes.geojson');
+  let geo = JSON.parse(rawdata);
+  return res.json(geo)
+})
+
+app.get('/postgis', (req, res) => {
+    
+   db.one('SELECT geo FROM public.stores', 123)
+    .then((data) => {      
+      //return res.json(data.geo)
+      return res.status(200).send(data.geo)
+    })
+    .catch((error) => {
+      console.log('ERROR:', error)
+    }) 
+})
 
 app.get('/read', (req, res) => {
 
@@ -177,7 +201,7 @@ async function authenticate() {
   
 
   try {
-    const url = process.env.CENTREON_URL_PREFIX + '/index.php?action=authenticate';
+    const url = process.env.CENTREON_URL_PREFIX + 'index.php?action=authenticate';
     const response = await fetch(url, { method: 'POST', body: form });
     const data = await response.json()
     return data;
