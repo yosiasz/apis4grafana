@@ -18,11 +18,40 @@ app.use(bodyParser.json())
 app.use(express.static('public'))
 app.use(cors());
 
-app.options('*', cors()) /
+app.options("*", cors());
 
-/*  */
+app.get("/provinces", (req, res) => {
+  let raw = fs.readFileSync(
+    "./data/limits_IT_provinces.geojson"
+  );
+  let geojson = JSON.parse(raw);
+  let properties = geojson.features.map((p) => p.properties);
 
-app.get('/geo', (req, res) => { 
+  return res.send(properties);
+});
+
+app.get("/provinces/:prov_istat_code_num", (req, res) => {
+  let geojson = fs.readFileSync(
+    "/data/limits_IT_provinces.geojson"
+  );
+  let featureCollection = JSON.parse(geojson);
+  let prov_istat_code_num = req.params.prov_istat_code_num
+  let feature = featureCollection.features.filter(function (feature) {
+    return feature.properties.prov_istat_code_num === parseInt(prov_istat_code_num);
+  });
+
+  province = {};
+  province.type = "FeatureCollection";
+  province.bbox = [
+    6.62662136853768, 35.493691935511417, 18.52038159909892, 47.091783746462159,
+  ];
+  province.features = feature;
+
+  return res.send(province);
+});
+
+
+app.get('/geo', (req, res) => {
 
   let rawdata = fs.readFileSync('./data/earthquakes.geojson');
   let geo = JSON.parse(rawdata);
@@ -30,15 +59,15 @@ app.get('/geo', (req, res) => {
 })
 
 app.get('/postgis', (req, res) => {
-    
-   db.one('SELECT geo FROM public.stores', 123)
-    .then((data) => {      
+
+  db.one('SELECT geo FROM public.stores', 123)
+    .then((data) => {
       //return res.json(data.geo)
       return res.status(200).send(data.geo)
     })
     .catch((error) => {
       console.log('ERROR:', error)
-    }) 
+    })
 })
 
 app.get('/read', (req, res) => {
@@ -76,7 +105,7 @@ app.get('/planets', (req, res) => {
 
   const MongoClient = require('mongodb').MongoClient
 
-  MongoClient.connect('mongodb://localhost:27017/grafana', (err, client) => {
+  MongoClient.connect(process.env.MONGO_HOST, (err, client) => {
     if (err) throw err
 
     const db = client.db('grafana')
@@ -94,7 +123,7 @@ app.get('/nodes', (req, res) => {
 
 
   const connection = mysql.createConnection({
-    host: 'localhost',
+    host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USERNAME,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE
@@ -177,15 +206,15 @@ app.get('/', (req, res) => {
 app.get("/hosts", async (req, res) => {
   //https://docs-api.centreon.com/api/centreon-web/
   a = await authenticate();
-  const headers = { 'X-AUTH-TOKEN': a.authToken};
+  const headers = { 'X-AUTH-TOKEN': a.authToken };
 
   try {
-    hostsurl =  process.env.CENTREON_URL_PREFIX + process.env.CENTREON_VERSION + '/monitoring/hosts'
+    hostsurl = process.env.CENTREON_URL_PREFIX + process.env.CENTREON_VERSION + '/monitoring/hosts'
     const response = await fetch(hostsurl, {
-      method: 'GET',      
+      method: 'GET',
       headers: headers
     });
-    
+
     const data = await response.json()
     return res.json(data);
   } catch (e) {
@@ -199,7 +228,7 @@ async function authenticate() {
   const form = new FormData();
   form.append("username", process.env.CENTREON_USERNAME);
   form.append('password', process.env.CENTREON_PASSWORD);
-  
+
 
   try {
     const url = process.env.CENTREON_URL_PREFIX + 'index.php?action=authenticate';
